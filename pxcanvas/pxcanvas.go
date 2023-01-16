@@ -25,6 +25,9 @@ type PxCanvas struct {
 	reloadImage bool           // reloads image stored in PixelData
 }
 
+/*
+Calculate the bounds of the canvas. Return rectangle type.
+*/
 func (pxCanvas *PxCanvas) Bounds() image.Rectangle {
 	x0 := int(pxCanvas.CanvasOffset.X)
 	y0 := int(pxCanvas.CanvasOffset.Y)
@@ -33,6 +36,9 @@ func (pxCanvas *PxCanvas) Bounds() image.Rectangle {
 	return image.Rect(x0, y0, x1, y1)
 }
 
+/*
+Checks whether `pos` is withing the boundaries of the rectangle type.
+*/
 func InBounds(pos fyne.Position, bounds image.Rectangle) bool {
 	if pos.X >= float32(bounds.Min.X) && pos.X < float32(bounds.Max.X) && pos.Y >= float32(bounds.Min.Y) && pos.Y < float32(bounds.Max.Y) {
 		return true
@@ -83,7 +89,37 @@ func (pxCanvas *PxCanvas) CreateRenderer() fyne.WidgetRenderer {
 
 // attempts to pan the canvas, may not always succeed
 func (pxCanvas *PxCanvas) TryPan(previousCoord *fyne.PointEvent, ev *desktop.MouseEvent) {
-	if previousCoord != nil && ev.Button == desktop.MouseButtonPrimary {
+	if previousCoord != nil && ev.Button == desktop.MouseButtonSecondary {
 		pxCanvas.Pan(*previousCoord, ev.PointEvent)
 	}
+}
+
+/*
+Implements Brushable interface
+*/
+func (pxCanvas *PxCanvas) SetColor(c color.Color, x, y int) {
+	if nrgba, ok := pxCanvas.PixelData.(*image.NRGBA); ok {
+		nrgba.Set(x, y, c)
+	}
+
+	if rgba, ok := pxCanvas.PixelData.(*image.RGBA); ok {
+		rgba.Set(x, y, c)
+	}
+	pxCanvas.Refresh()
+}
+
+func (pxCanvas *PxCanvas) MouseToCanvasXY(ev *desktop.MouseEvent) (*int, *int) {
+	bounds := pxCanvas.Bounds()
+	if !InBounds(ev.Position, bounds) {
+		return nil, nil
+	}
+
+	pxSize := float32(pxCanvas.PxSize)
+	xOffset := pxCanvas.CanvasOffset.X
+	yOffset := pxCanvas.CanvasOffset.Y
+
+	x := int((ev.Position.X - xOffset) / pxSize)
+	y := int((ev.Position.Y - yOffset) / pxSize)
+
+	return &x, &y
 }

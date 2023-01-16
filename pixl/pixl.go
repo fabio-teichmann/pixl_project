@@ -16,7 +16,8 @@ func main() {
 	pixlWindow := pixlApp.NewWindow("pixl")
 
 	state := apptype.State{
-		BrushColor:     color.NRGBA{0, 255, 255, 255},
+		// initial color for painting
+		BrushColor:     color.NRGBA{255, 0, 0, 255},
 		SwatchSelected: 0,
 	}
 

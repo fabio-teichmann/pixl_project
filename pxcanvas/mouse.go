@@ -7,6 +7,8 @@ Implements `Mouse Interface`
 package pxcanvas
 
 import (
+	"pixl/pxcanvas/brush"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/driver/desktop"
 )
@@ -24,7 +26,10 @@ func (pxCanvas *PxCanvas) Scrolled(ev *fyne.ScrollEvent) {
 Hoverable
 */
 func (pxCanvas *PxCanvas) MouseMoved(ev *desktop.MouseEvent) {
-	pxCanvas.TryPan(pxCanvas.mouseState.previousCoord, ev)
+	if x, y := pxCanvas.MouseToCanvasXY(ev); x != nil && y != nil {
+		brush.TryBrush(pxCanvas.appState, pxCanvas, ev)
+	}
+	//pxCanvas.TryPan(pxCanvas.mouseState.previousCoord, ev)
 	pxCanvas.Refresh()
 	pxCanvas.mouseState.previousCoord = &ev.PointEvent
 }
@@ -32,3 +37,13 @@ func (pxCanvas *PxCanvas) MouseMoved(ev *desktop.MouseEvent) {
 // unused functions
 func (pxCanvas *PxCanvas) MouseIn(ev *desktop.MouseEvent) {}
 func (pxCanvas *PxCanvas) MouseOut()                      {}
+
+/*
+Clickable
+*/
+
+func (pxCanvas *PxCanvas) MouseUp(ev *desktop.MouseEvent) {}
+
+func (pxCanvas *PxCanvas) MouseDown(ev *desktop.MouseEvent) {
+	brush.TryBrush(pxCanvas.appState, pxCanvas, ev)
+}
