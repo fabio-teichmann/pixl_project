@@ -6,8 +6,8 @@ func Setup(app *AppInit) {
 	swatchesContainer := BuildSwatches(app)
 	colorPicker := SetupColorPicker(app)
 
-	// order of border container = top, bottom, left, right
-	appLayout := container.NewBorder(nil, swatchesContainer, nil, colorPicker)
+	// order of border container = top, bottom, left, right, everything else included in center
+	appLayout := container.NewBorder(nil, swatchesContainer, nil, colorPicker, app.PixlCanvas)
 
 	app.PixlWindow.SetContent(appLayout)
 }
