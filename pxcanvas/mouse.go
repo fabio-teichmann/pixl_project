@@ -28,6 +28,11 @@ Hoverable
 func (pxCanvas *PxCanvas) MouseMoved(ev *desktop.MouseEvent) {
 	if x, y := pxCanvas.MouseToCanvasXY(ev); x != nil && y != nil {
 		brush.TryBrush(pxCanvas.appState, pxCanvas, ev)
+		cursor := brush.Cursor(pxCanvas.PxCanvasConfig, pxCanvas.appState.BrushType, ev, *x, *y)
+		pxCanvas.renderer.SetCursor(cursor)
+	} else {
+		// hide cursor when it leaves the canvas
+		pxCanvas.renderer.SetCursor(make([]fyne.CanvasObject, 0))
 	}
 	//pxCanvas.TryPan(pxCanvas.mouseState.previousCoord, ev)
 	pxCanvas.Refresh()

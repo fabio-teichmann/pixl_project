@@ -9,6 +9,11 @@ type PxCanvasRenderer struct {
 	pxCanvas     *PxCanvas
 	canvasImage  *canvas.Image // part of Fyne toolkit, allows to display image present in PxCanvas struct; in PIXEL
 	canvasBorder []canvas.Line // part of Fyne toolkit, use slice to draw borders around canvas
+	canvasCursor []fyne.CanvasObject
+}
+
+func (renderer *PxCanvasRenderer) SetCursor(objects []fyne.CanvasObject) {
+	renderer.canvasCursor = objects
 }
 
 // WidgetRenderer interface implementation.
@@ -23,6 +28,7 @@ func (renderer *PxCanvasRenderer) Objects() []fyne.CanvasObject {
 		objects = append(objects, &renderer.canvasBorder[i])
 	}
 	objects = append(objects, renderer.canvasImage)
+	objects = append(objects, renderer.canvasCursor...)
 	return objects
 }
 
